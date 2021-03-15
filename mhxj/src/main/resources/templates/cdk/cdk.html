@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>GM后台管理</title>
+    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.php">首页</a></li>
+               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+                <li><a href="/api_logout.php?action=logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" >
+ 
+ function doGMPay()
+ {
+ 	 $.ajaxSetup({
+  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	$.post("./api/api_services.php?action=gm_pay",{
+		  	identityName:$("#identityName").val(),
+		  	playerName:$("#playerName").val(),
+		  	gameGold:$("#gameGold").val(),
+		  	payMoney:$("#payMoney").val()
+	  	},function(data){	
+	  		var code = data.code;
+	  		alert(code);
+	  		if(code == 0){
+	  			 $("#divMsg").html('pay success');
+	  		}
+	  	},"json");
+ }
+ 
+</script>
+<div class="container clearfix">
+    <div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>常用操作</a>
+                    <ul class="sub-menu">
+                        <li><a href="user.php"><i class="icon-font">&#xe006;</i>角色管理</a></li>
+                        <li><a href="gm_cmd.php"><i class="icon-font">&#xe052;</i>玩家经验</a></li>
+                        <li><a href="PayGM.php"><i class="icon-font">&#xe008;</i>充值管理</a></li>
+                        <li><a href="mail.php"><i class="icon-font">&#xe005;</i>邮件管理</a></li>                       
+                        <li th:if="${session.user.account eq 'admin'}"><a href="cdk.php"><i class="icon-font">&#xe004;</i>CDK</a></li>
+                        
+                        <li ><a href="stat.php"><i class="icon-font">&#xe004;</i>统计数据</a></li>
+                        <li ><a href="stat_item.php"><i class="icon-font">&#xe004;</i>物品统计</a></li>
+                        <li ><a href="chat.php"><i class="icon-font">&#xe004;</i>聊天监控</a></li>
+                        <li ><a href="notice.php"><i class="icon-font">&#xe004;</i>通知管理</a></li>
+                    </ul>
+                </li>
+            
+            </ul>
+        </div>
+    </div>
+     <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="/jscss/admin">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">礼包管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                    <table class="search-tab">
+                            <tr><td>礼包名称:  <input class="common-text" value="" name="redeem_name"  id="redeem_name" type="text"></td></tr>
+                            <tr><td>礼包ID:  <input class="common-text" value="" name="redeem_id"  id="redeem_id" type="text"></td></tr>
+                            
+                            <tr><td>有效期(天):  <input class="common-text" value="" name="expire_days"  id="expire_days"  type="text"></td></tr>
+                            <tr><td>礼包数量(可兑换数量-通用码填写单个兑换数量-非通用码填1):  <input class="common-text" value="" name="code_redeem_cnt"  id="code_redeem_cnt"  type="text"></td></tr>
+                            <tr><td>礼包数量(生成礼包码数量-通用码填1-非通用码填数量):  <input class="common-text" value="" name="amount"  id="amount"  type="text"></td></tr>
+                            
+                            <tr><td>礼包ID:  
+                            	<select class="common-text" name="gift_id" id="gift_id" style="height:29px;" > 
+                            		<option value=''>选择礼包</option>
+  									<option value="27628">新手礼包</option>
+  									<option value="27629">特权礼包</option>
+  									<option value="27630">专属礼包</option>
+  									<option value="27631">活动礼包</option>
+  									<option value="27632">预约礼包</option>
+  									<option value="27633">首充礼包</option>
+  									
+  									<option value="27634">单日累充50元礼包</option>
+  									<option value="27635">单日累充100元礼包</option>
+  									<option value="27636">单日累充200礼包</option>
+  									<option value="27637">单日累充500礼包</option>
+  									<option value="27638">单日累充800礼包</option>
+  									<option value="27639">单日累充1200礼包</option>
+  									<option value="27640">单日累充1500礼包</option>
+  									<option value="27641">单日累充2000礼包</option>
+  									<option value="27642">单日累充3000礼包</option>
+  									<option value="27643">单日累充5000礼包</option>
+  									
+  									<option value="27644">终身累计500礼包</option>
+  									<option value="27645">终身累计1000礼包</option>
+  									<option value="27646">终身累计2000礼包</option>
+  									<option value="27647">终身累计3000礼包</option>
+  									<option value="27648">终身累计5000礼包</option>
+  									<option value="27649">终身累计10000礼包</option>
+  									<option value="27650">终身累计20000礼包</option>
+  									<option value="27651">终身累充50000礼包</option>
+  									
+  									<option value="27652">单笔充值10礼包</option>
+  									<option value="27653">单笔充值30礼包</option>
+  									<option value="27654">单笔充值50礼包</option>
+  									<option value="27655">单笔充值100礼包</option>
+  									<option value="27656">单笔充值200礼包</option>  									
+  									
+  									<option value="27657">单笔充值328礼包</option>
+  									<option value="27658">单笔充值648礼包</option>
+  									<option value="27659">单笔充值1000礼包</option>
+  									
+  									<option value="27660">限时累充500礼包</option>
+  									<option value="27661">限时累充1000礼包</option>
+  									<option value="27662">限时累充3000礼包</option>
+  									<option value="27663">限时累充5000礼包</option>
+  									<option value="27664">限时累充10000礼包</option>
+  									<option value="27665">限时累充20000礼包</option>
+  									
+  									
+  								</select>
+                            </td></tr>
+                            
+                            <tr>
+                            <td><input class="btn btn-primary btn2" id="sub" value="生成" type="button" onclick="doCreateCDK()"></td>
+                            </tr>   
+                    </table>
+               <div  id="divMsg"> 
+               </div>
+            </div>
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+<script>
+function doCreateCDK(){
+	var redeem_name=$("#redeem_name").val();
+	var redeem_id=$("#redeem_id").val();
+	var expire_days=$("#expire_days").val();
+	var code_redeem_cnt=$("#code_redeem_cnt").val();
+	var gift_id=$("#gift_id").val();
+	var amount=$("#amount").val();
+	if(redeem_name==""||redeem_name==undefined){
+		alert("礼包名称错误");
+		return;
+	}
+	if(redeem_id==""||redeem_id==undefined){
+		alert("礼包ID错误");
+		return;
+	}
+	if(expire_days==""||expire_days==undefined){
+		alert("有效期错误");
+		return;
+	}
+	if(code_redeem_cnt==""||code_redeem_cnt==undefined){
+		alert("兑换码数量错误");
+		return;
+	}
+	if(gift_id==""||gift_id==undefined){
+		alert("礼包ID错误");
+		return;
+	}
+	if(code_redeem_cnt>=10000){
+		alert("数量超限");
+		return;
+	}
+	jQuery.ajaxSetup({
+  	contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	
+	
+	jQuery.post("/api/createCdk",
+	{
+		redeem_name:redeem_name,
+		redeem_id:redeem_id,
+		expire_days:expire_days,
+		code_redeem_cnt:code_redeem_cnt,
+		gift_id:gift_id,
+		amount:amount
+	},function(data){
+		console.log(data)
+		$("#divMsg").html(data);
+	});
+}
+</script>
+</html>

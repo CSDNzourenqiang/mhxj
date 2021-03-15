@@ -1,0 +1,243 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>GM后台管理</title>
+    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.php">首页</a></li>
+               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+                <li><a href="/api_logout.php?action=logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+
+<div class="container clearfix">
+    <div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>常用操作</a>
+                    <ul class="sub-menu">
+                        <li><a href="user.php"><i class="icon-font">&#xe006;</i>角色管理</a></li>
+                        <li><a href="gm_cmd.php"><i class="icon-font">&#xe052;</i>玩家经验</a></li>
+                        <li><a href="PayGM.php"><i class="icon-font">&#xe008;</i>充值管理</a></li>
+                        <li><a href="mail.php"><i class="icon-font">&#xe005;</i>邮件管理</a></li>                       
+                        <li th:if="${session.user.account eq 'admin'}"><a href="cdk.php"><i class="icon-font">&#xe004;</i>CDK</a></li>
+                        
+                        <li ><a href="stat.php"><i class="icon-font">&#xe004;</i>统计数据</a></li>
+                        <li ><a href="stat_item.php"><i class="icon-font">&#xe004;</i>物品统计</a></li>
+                        <li ><a href="chat.php"><i class="icon-font">&#xe004;</i>聊天监控</a></li>
+						<li ><a href="notice.php"><i class="icon-font">&#xe004;</i>通知管理</a></li>
+                    </ul>
+                </li>
+            
+            </ul>
+        </div>
+    </div>
+     <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="/jscss/admin">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">充值管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                    <table class="search-tab">
+                            <tr><td>选区:  
+                            <select class="common-text" name="area" id="area" style="height:29px;" > 
+                            	<option value=''>选择区</option>
+                            	<option th:each="area:${area_list}" th:text="${area.name}" th:value="${area.key}"></option>
+  								
+  							</select>
+                            
+                            </td></tr>
+                            <tr><td>角色ID:  <input class="common-text" value="" name="ipid"  id="ipid"  type="text"></td></tr>
+                            <tr><td>充值选项:  
+	                            <select class="common-text" name="area" id="cmd" style="height:29px;" > 
+	                            	<option value=''>选择充值类型</option>
+	                            	<option value="huodong charge 202">终身卡</option>
+	                            	<option value="huodong charge 201">月卡</option>
+	                            	<option value="huodong charge 301">成长基金</option>
+	                            	<option value="huodong charge 401 1008">1元</option>
+	                            	<option value="huodong charge 401 1001">10元</option>
+	                            	<option value="huodong charge 401 1001">10元</option>
+	                            	<option value="huodong charge 401 1002">30元</option>
+	                            	<option value="huodong charge 401 1003">50元</option>
+	                            	<option value="huodong charge 401 1004">100元</option>
+	                            	<option value="huodong charge 401 1005">200元</option>
+	                            	<option value="huodong charge 401 1006">328元</option>
+	                            	<option value="huodong charge 401 1007">648元</option>
+	                            	<option value="huodong charge 401 1012">1000元</option>
+	                            	<option value="huodong charge 401 1013">2000元</option>
+	                            	<option value="huodong charge 401 1014">5000元</option>
+	                            	<option value="huodong charge 1003 212016">每日特权礼包(月卡/尊享卡)</option>
+	  								<option value="huodong charge 1003 212024">每日金币礼包(月卡/尊享卡)</option>
+	  								<option value="huodong charge 1003 212025">每日深蓝礼包(月卡/尊享卡)</option>
+	  								
+	  								<option value="huodong gradegift 101 30">30级等级礼包</option>
+	  								<option value="huodong gradegift 101 40">40级等级礼包</option>
+	  								<option value="huodong gradegift 101 45">45级等级礼包</option>
+	  								<option value="huodong gradegift 101 50">50级等级礼包</option>
+	  								<option value="huodong gradegift 101 55">55级等级礼包</option>
+	  								<option value="huodong gradegift 101 60">60级等级礼包</option>
+	  								<option value="huodong gradegift 101 65">65级等级礼包</option>
+	  								<option value="huodong gradegift 101 70">70级等级礼包</option>
+	  								<option value="huodong gradegift 101 75">75级等级礼包</option>
+	  								<option value="huodong gradegift 101 80">80级等级礼包</option>
+	  								
+	  								<option value="addtitle 1018">称号：王者公会</option>
+	  								<option value="addtitle 1019">称号：王者公会会长</option>
+	  								<option value="addtitle 1020">称号：黄金公会</option>
+	  								<option value="addtitle 1021">称号：黄金公会会长</option>
+	  								<option value="addtitle 1022">称号：白银公会</option>
+	  								<option value="addtitle 1023">称号：白银公会会长</option>
+	  								<option value="addtitle 1024">称号：明日之星</option>
+	  								<option value="addtitle 1025">称号：独孤求败</option>
+	  								<option value="addtitle 1026">称号：谁与争锋</option>
+	  								<option value="addtitle 1027">称号：所向披靡</option>
+	  								<option value="addtitle 1028">称号：地牢终结者</option>
+	  								<option value="addtitle 1029">称号：地牢征服者</option>
+	  								<option value="addtitle 1030">称号：地牢破坏者</option>
+	  								
+	  								<option value="addtitle 1031">称号：眯眯眼是变态</option>
+									<option value="addtitle 1032">称号：邻家妹妹</option>
+									<option value="addtitle 1033">称号：兄控</option>
+									<option value="addtitle 1034">称号：农夫三拳</option>
+									<option value="addtitle 1035">称号：赌神</option>
+									<option value="addtitle 1036">称号：神之右手</option>
+									<option value="addtitle 1037">称号：茶会噩梦</option>
+									<option value="addtitle 1038">称号：我是傲娇</option>
+									<option value="addtitle 1039">称号：闷骚美男子</option>
+									<option value="addtitle 1040">称号：脸炮</option>
+									<option value="addtitle 1041">称号：妹控</option>
+									<option value="addtitle 1042">称号：守夜人</option>
+									<option value="addtitle 1043">称号：泡泡娘</option>
+									<option value="addtitle 1044">称号：姐控</option>
+									<option value="addtitle 1045">称号：迷妹</option>
+									<option value="addtitle 1046">称号：小天使</option>
+									<option value="addtitle 1047">称号：欺诈兔子</option>
+									<option value="addtitle 1048">称号：天然呆</option>
+									<option value="addtitle 1049">称号：开局一条狗</option>
+									<option value="addtitle 1050">称号：种竹专业户</option>
+									<option value="addtitle 1051">称号：顾家好男人</option>
+									<option value="addtitle 1052">称号：无敌小钢炮</option>
+									<option value="addtitle 1053">称号：小豆丁</option>
+									<option value="addtitle 1054">称号：浪里白条</option>
+									<option value="addtitle 1055">称号：话唠</option>
+									<option value="addtitle 1056">称号：角落种蘑菇</option>
+									<option value="addtitle 1057">称号：天然疯</option>
+									<option value="addtitle 1058">称号：吃货</option>
+									<option value="addtitle 1059">称号：控制狂</option>
+									<option value="addtitle 1060">称号：女王大人</option>
+									<option value="addtitle 1061">称号：八卦小王子</option>
+									<option value="addtitle 1062">称号：三无</option>
+									<option value="addtitle 1063">称号：养得累</option>
+									<option value="addtitle 1064">称号：扑街之王</option>
+									<option value="addtitle 1065">称号：抖S</option>
+									<option value="addtitle 1066">称号：工作狂人</option>
+									<option value="addtitle 1067">称号：精分中毒患者</option>
+									<option value="addtitle 1068">称号：神神叨叨</option>
+									<option value="addtitle 1069">称号：浮夸之神</option>
+									<option value="addtitle 1070">称号：抖M</option>
+									<option value="addtitle 1071">称号：自恋狂</option>
+									
+									<option value="rewardorgcash 33 50000">增加工会资金</option>
+									<option value="rewardorgoffer 14306 1000">增加工会贡献</option>
+									
+									<option value="addtask 10124">添加任务：时间回溯</option>
+									<option value="addtask 10047">添加任务：央生的药</option>
+									<option value="addtask 10175">添加任务：感叹-手下留情</option>
+									<option value="cleartask">清除主线任务</option>
+									
+	  							</select>
+                            </td></tr>
+                            
+                            <tr>
+                            <!-- <td><input class="btn btn-primary btn2" id="sub" value="角色加密" type="button" onclick="Pay()"></td> -->
+                            <td><input class="btn btn-primary btn2" id="sub" value="充值" type="button" onclick="doGMPay()"></td>
+                            </tr>   
+                            <tr><td>任务操作: 先清除任务再添加任务 
+	                            
+                            </td>
+                            <td><input class="btn btn-primary btn2" id="sub" value="清除任务" type="button" onclick="doClearTask()"></td>
+                            
+                            </tr>
+                            <tr>
+                            <td><input  id="cmd_task" placeholder="输入任务编号" type="text"></td>
+                            <td><input class="btn btn-primary btn2" id="sub" value="添加任务" type="button" onclick="doAddTask()"></td>
+                            </tr>   
+                    </table>
+               <div  id="divMsg"> </div>
+            </div>
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+<script type="text/javascript" >
+ 
+ function doGMPay()
+ {
+ 	 $.ajaxSetup({
+  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	$.post("/api/api_charge.php",{
+		  	area:$("#area").val(),
+		  	ipid:$("#ipid").val(),
+		  	cmd:$("#cmd").val()
+		  	
+	  	},function(data){	
+	  		$("#divMsg").html(data);
+	  	});
+ }
+ function doAddTask(){
+	 if(!$("#cmd_task").val()){
+		 alert("任务错误");
+		 return;
+	 }
+	 $.ajaxSetup({
+	  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+	  	});
+	  	$.post("/api/api_addtask.php",{
+			  	area:$("#area").val(),
+			  	ipid:$("#ipid").val(),
+			  	cmd:"addtask "+$("#cmd_task").val()
+			  	
+		  	},function(data){	
+		  		$("#divMsg").html(data);
+		  	});
+	 
+ }
+ function doClearTask(){
+	 $.ajaxSetup({
+	  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+	  	});
+	  	$.post("/api/api_cleartask.php",{
+			  	area:$("#area").val(),
+			  	ipid:$("#ipid").val(),
+			  	cmd:"cleartask"
+			  	
+		  	},function(data){	
+		  		$("#divMsg").html(data);
+		  	});
+ }
+</script>
+</html>

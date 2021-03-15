@@ -1,0 +1,358 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>GM后台管理</title>
+    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.php">首页</a></li>
+               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+                <li><a href="/api_logout.php?action=logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container clearfix">
+    <!--/sidebar-->
+    <div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>常用操作</a>
+                    <ul class="sub-menu">
+                        <li><a href="user.php"><i class="icon-font">&#xe006;</i>角色管理</a></li>
+                        <li><a href="gm_cmd.php"><i class="icon-font">&#xe052;</i>玩家经验</a></li>
+                        <li><a href="PayGM.php"><i class="icon-font">&#xe008;</i>充值管理</a></li>
+                        <li><a href="mail.php"><i class="icon-font">&#xe005;</i>邮件管理</a></li>                       
+                        <li th:if="${session.user.account eq 'admin'}"><a href="cdk.php"><i class="icon-font">&#xe004;</i>CDK</a></li>
+                        
+                        <li ><a href="stat.php"><i class="icon-font">&#xe004;</i>统计数据</a></li>
+                        <li ><a href="stat_item.php"><i class="icon-font">&#xe004;</i>物品统计</a></li>
+                        <li ><a href="chat.php"><i class="icon-font">&#xe004;</i>聊天监控</a></li>
+                        <li ><a href="notice.php"><i class="icon-font">&#xe004;</i>通知管理</a></li>
+                        
+                    </ul>
+                </li>
+            
+            </ul>
+        </div>
+    </div>
+ 
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="/gamemgr">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">角色管理</span></div>
+        </div>
+
+        <div class="result-wrap">
+
+                <div class="result-title">
+                  <input class="common-text"  placeholder="角色名称" name=""  id="rolename" type="text" >
+                  <select class="common-text" name="area" id="area" style="height:29px;" > 
+	                	<option value=''>选择区</option>
+						<option th:each="area:${area_list}" th:value="${area.key}" th:text="${area.name}"></option>
+				  </select>
+                  
+                  <input class="btn btn-primary btn2" id="addItem" value="搜索" type="button" onclick="searchPlayer()">
+
+                </div>
+                <div class="result-content">
+                    <table class="result-tab" id="player"  width="100%" th:fragment="player">
+                        <tr>
+                            <th>账号名</th>
+                            <th>角色ID</th>
+                            <th>角色名</th>
+                            <th>操作</th>
+                        </tr>
+                        
+                        <tr>
+                            <td id="identityId"   name="identityName"></td>
+                            <td id="id"  name="id"></td>
+                            <td id="name"  name="name"></td>
+                            <td>
+                                <a class="link-update" href="PayGM.php?identityName=oQXJq1GDTouUQCz-IhDaUu_blE6A&name=独孤飞兰">充值</a>
+                                <a class="link-update" href="mail.php?name=独孤飞兰">邮件</a>
+                                <a class="link-del" href="gm_cmd.php?name=独孤飞兰">升级</a>
+                                <a class="link-del"  href="javaScript:kickPlayer(this)">踢下线</a>
+                                <a class="link-del"  href="javaScript:canclePlayer(this)">解禁</a>
+                                <a class="link-del"  href="javaScript:banChatPlayer(this)">禁言</a>
+                            </td>
+                        </tr> 
+                      </table>
+                      <div>
+                      	玩家详细信息：(<font color="red">*实际数据有2分钟延迟！！</font>)
+                      	<div id="offline">
+                      	
+                      		 <table class="result-tab" id="player"  width="100%" th:fragment="player">
+		                        
+		                        <tr>
+		                            <td>等级：<p id="player_level"></p></td>
+		                            <td>玩家水晶：<p id="player_gold"></p></td>
+		                            <td>水晶花费：<p id="player_consume"></p></td>
+		                            <td>战力值：<p id="player_power"></p></td>
+		                            <td>昵称：<p id="player_nickname"></p></td>
+		                            <td>历史充值额：<p id="player_charge"></p></td>
+		                        </tr> 
+		                        
+		                      </table>
+                      		
+                      	</div>
+                      	<!-- 邮箱 -->
+                      	玩家邮箱：
+                      	<div>
+                      		<table class="result-tab" id="mail"  width="100%">
+                      			<tr>
+		                            <td>邮件标题</td>
+		                            <td>邮件内容</td>
+		                            <td>附件</td>
+		                            <td>是否已删除</td>
+		                            <td>发送时间</td>
+		                            <td>读取状态</td>
+		                        </tr>
+		                        <tr>
+		                        	<td>邮件标题</td>
+		                            <td>邮件内容</td>
+		                            <td>附件</td>
+		                            <td>是否已删除</td>
+		                            <td>发送时间</td>
+		                            <td>读取状态</td>
+		                        
+		                        </tr>
+                      		</table>
+                      	</div>
+                      	<!-- 消费记录 -->
+                      	玩家消费详情：
+                      	<div id="consume">
+                      		<table class="result-tab" id="shop"  width="100%" th:fragment="player">
+		                        
+		                        <tr>
+		                            <td>消费类别</td>
+		                            <td>消费明细</td>
+		                            <td>消费</td>
+		                            <td>物品id</td>
+		                            <td>购买数量</td>
+		                            <td>购买时间</td>
+		                        </tr> 
+		                       
+		                      </table>
+                      	</div>
+                      	
+                      	玩家兑换详情:
+                      	<div>
+                      		<table class="result-tab" id="exchange"  width="100%" th:fragment="player">
+		                        
+		                        <tr>
+		                            <td>消费类别</td>
+		                            <td>兑换源货币</td>
+		                            <td>兑换目标货币</td>
+		                            <td>花费货币数量</td>
+		                            <td>兑换金额</td>
+		                            <td>购买时间</td>
+		                        </tr> 
+		                        
+		                      </table>
+                      	
+                      	</div>
+                      </div>
+                </div>
+
+        </div>
+    </div>
+    <!--/main-->
+    <input id="ipid" hidden />
+</div>
+</body>
+<script>
+function kickPlayer(obj){
+	if($("#ipid").val()==""||$("#ipid").val()==undefined){
+		alert("玩家失效，请重新查询！")
+		return;
+	}
+	jQuery.ajaxSetup({
+  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	
+	
+	jQuery.post("/api/kickPlayer",
+	{
+		ipid:$("#ipid").val(),
+		area:$("#area").val()
+	},function(data){
+		$("#ipid").val("");
+		alert(data);
+		
+	});
+}
+function canclePlayer(obj){
+    if($("#ipid").val()==""||$("#ipid").val()==undefined){
+        alert("玩家失效，请重新查询！")
+        return;
+    }
+    jQuery.ajaxSetup({
+        contentType: "application/x-www-form-urlencoded; charset=utf-8"
+    });
+
+
+    jQuery.post("/api/canclePlayer",
+        {
+            ipid:$("#ipid").val(),
+            area:$("#area").val()
+        },function(data){
+            $("#ipid").val("");
+            alert(data);
+        });
+}
+function banChatPlayer(obj){
+    if($("#ipid").val()==""||$("#ipid").val()==undefined){
+        alert("玩家失效，请重新查询！")
+        return;
+    }
+    jQuery.ajaxSetup({
+        contentType: "application/x-www-form-urlencoded; charset=utf-8"
+    });
+
+
+    jQuery.post("/api/banChatPlayer",
+        {
+            ipid:$("#ipid").val(),
+            area:$("#area").val()
+        },function(data){
+            $("#ipid").val("");
+            alert(data);
+        });
+}
+function searchPlayer(){
+	var area=$("#area").val();
+	if(area==""||area==undefined){
+		alert("选择区");
+		return;
+	}
+	jQuery.ajaxSetup({
+  	contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	
+	
+	jQuery.post("/api/searchPlayer",
+	{
+		name:$("#rolename").val(),
+		area:$("#area").val()
+	},function(json_data){
+		var player=json_data.player;
+		var offline=json_data.offline;
+		var exchangeList=json_data.exchangeList;
+		var buyList=json_data.buyList;
+		var mailList=json_data.mailList;
+		$("#ipid").val(player.pid);
+		$("#identityId").html(player._id);
+		$("#id").html(player.pid)
+		$("#name").html(player.name)
+		calExchangeData(exchangeList);
+		calShopData(buyList);
+		calMailData(mailList);
+		calOfflineData(offline);
+	});
+
+}
+//处理玩家邮件
+function calMailData(data){
+	console.log(data)
+	var str_shop=$("#mail");
+	var str_shop_tr="<tr>" + 
+	"<td>邮件标题</td>" + 
+	"<td>邮件内容</td>" + 
+	"<td>附件</td>" + 
+	"<td>是否已删除</td>" + 
+	"<td>发送时间</td>" + 
+	"<td>读取状态</td>" + 
+	"</tr>";
+	for(var i in data){
+		console.log(data[i]);
+		var obj=data[i];
+		var str_temp="";
+		str_temp="<tr><td>"+obj.mail_title+"</td><td>内容</td><td>"+obj.attach+"</td><td>"+obj.reason+"</td><td>"+obj.mail_time+"</td><td>已读</td></tr>"
+		str_shop_tr=str_shop_tr+str_temp;
+	}
+	str_shop.html(str_shop_tr);
+}
+//处理兑换详情
+function calExchangeData(data){
+	var str_shop=$("#exchange");
+	var str_shop_tr="<tr>" + 
+	"<td>消费类别</td>" + 
+	"<td>兑换源货币</td>" + 
+	"<td>兑换目标货币</td>" + 
+	"<td>花费货币数量</td>" + 
+	"<td>兑换金额</td>" + 
+	"<td>购买时间</td>" + 
+	"</tr> ";
+	for(var i in data){
+		var obj=data[i];
+		var str_temp="";
+		str_temp="<tr><td>兑换</td><td>"+(obj.source_type=="gold"?"水晶":"金币")+"</td><td>"+(obj.target_type=="gold"?"水晶":"金币")+"</td><td>"+obj.source_val+"</td><td>"+obj.target_val+"</td><td>"+obj._time+"</td></tr>"
+		str_shop_tr=str_shop_tr+str_temp;
+	}
+	str_shop.html(str_shop_tr);
+}
+//处理玩家商店消费
+function calShopData(data){
+	var str_shop=$("#shop");
+	var str_shop_tr="<tr>" + 
+	"<td>消费类别</td>" + 
+	"<td>消费明细</td>" + 
+	"<td>消费</td>" + 
+	"<td>物品id</td>" + 
+	"<td>购买数量</td>" + 
+	"<td>购买时间</td>" + 
+	"</tr> ";
+	for(var i in data){
+		console.log(data[i]);
+		var obj=data[i];
+		var str_temp="";
+		str_temp="<tr><td>"+obj.reason+"</td><td>"+obj.subtype+"</td><td>"+obj.cost+"</td><td>"+obj.item_id+"</td><td>"+obj.amount+"</td><td>"+obj._time+"</td></tr>"
+		str_shop_tr=str_shop_tr+str_temp;
+	}
+	str_shop.html(str_shop_tr);
+}
+//处理玩家信息
+function calOfflineData(data){
+	var mail_info=data.mail_info;
+	var partner_info=data.partner_info;
+	var profile_info=data.profile_info;
+	$("#player_level").html(profile_info.grade);
+	$("#player_gold").html(profile_info.goldcoin);
+	$("#player_consume").html(profile_info.goldcoin_consume);
+	$("#player_power").html(profile_info.power);
+	$("#player_nickname").html(profile_info.name);
+	$("#player_charge").html(profile_info.historycharge);
+	
+}
+function timestampToTime(timestamp) {
+    var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    Y = date.getFullYear() + '-';
+    M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    D = date.getDate() + ' ';
+    h = date.getHours() + ':';
+    m = date.getMinutes() + ':';
+    s = date.getSeconds();
+    return Y+M+D+h+m+s;
+}
+</script>
+</html>

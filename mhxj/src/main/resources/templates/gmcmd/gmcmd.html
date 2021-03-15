@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>GM后台管理</title>
+    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.php">首页</a></li>
+               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+                <li><a href="/api_logout.php?action=logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" >
+
+function doCmdAction()
+{
+	var reg=/^\d{1,}$/
+	var pattern=new RegExp(reg);
+	
+	var ipid=$("#ipid").val();
+	var ival=$("#ival").val();
+	var area=$("#area").val();
+	if(area==""){
+		alert("选择区");
+		return;
+	}
+	if(!pattern.test(ipid)){
+		alert("非法的角色ID");
+		return;
+	}
+	if(!pattern.test(ival)){
+		alert("非法的经验值");
+		return;
+	}
+	if(ival<=0){
+		alert("经验值错误");
+		return;
+	}
+	$.ajaxSetup({
+  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+	$.post("/api/sendExp",{
+		area:area,
+		ipid:ipid,
+		ival:ival
+	},function(data){
+		console.log(data);
+		$("#res-info").html(data);
+	});
+}
+
+ function getitem()
+ {
+   $("#cmdstr").val("addItem "+$("#item").val()+" 1");
+ 
+ }
+
+function gongneng()
+ {
+   $("#cmdstr").val($("#gn").val());
+ }
+</script>
+<div class="container clearfix">
+    <div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>常用操作</a>
+                    <ul class="sub-menu">
+                        <li><a href="user.php"><i class="icon-font">&#xe006;</i>角色管理</a></li>
+                        <li><a href="gm_cmd.php"><i class="icon-font">&#xe052;</i>玩家经验</a></li>
+                        <li><a href="PayGM.php"><i class="icon-font">&#xe008;</i>充值管理</a></li>
+                        <li><a href="mail.php"><i class="icon-font">&#xe005;</i>邮件管理</a></li>                       
+                        <li th:if="${session.user.account eq 'admin'}"><a href="cdk.php"><i class="icon-font">&#xe004;</i>CDK</a></li>
+                        
+                        <li ><a href="stat.php"><i class="icon-font">&#xe004;</i>统计数据</a></li>
+                        <li ><a href="stat_item.php"><i class="icon-font">&#xe004;</i>物品统计</a></li>
+                        <li ><a href="chat.php"><i class="icon-font">&#xe004;</i>聊天监控</a></li>
+                        <li ><a href="notice.php"><i class="icon-font">&#xe004;</i>通知管理</a></li>
+                    </ul>
+                </li>
+            
+            </ul>
+        </div>
+    </div>
+     <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="/zhaofude">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">GM管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                    <table class="search-tab">
+                            <tr><td>所在区:
+                            <select class="common-text" name="area" id="area" style="height:29px;" onchange="getitem()"> 
+                            	<option value=''>选择区</option>
+  								<option th:each="area:${area_list}" th:text="${area.name}" th:value="${area.key}" ></option>
+  							</select>
+                            
+                            </td></tr>
+							
+                            <tr><td>角色ID:<input class="common-text" value="" name="ipid"  id="ipid"  type="text"></td></tr>
+                            <tr><td>经验值:<input class="common-text" value="" name="ival"  id="ival" type="test"></td></tr>
+                            <tr>
+                            <td><span><input class="btn btn-primary btn2" id="sub" value="执行" type="button" onclick="doCmdAction()"></span></td>
+                            </tr>   
+                    </table>
+               <div  id="divMsg"> </div>
+            </div>
+        </div>
+                       <div class="result-wrap">
+            <div class="result-title">
+                <h1>玩家经验</h1>
+            </div>
+            <div class="result-content">
+                <ul class="sys-info-list">
+                     <li>
+                        <span class="res-info">
+                        
+                        </span>
+                    </li>
+                    <li>
+                        <label class="res-lab">命令列表：</label>
+	                        <span class="res-info" id="res-info">
+	                        	
+							</span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+</html>

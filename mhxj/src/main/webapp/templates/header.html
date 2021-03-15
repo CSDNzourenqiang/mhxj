@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+    <!-- th:fragment 定义需要引入的代码块，该div包含的内容即为引用的公共内容 -->
+     <div th:fragment="myheader">
+        <div class="header">
+	        	<head>
+				    <meta charset="UTF-8">
+				    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+				    <title>GM后台管理</title>
+				    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+				    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+				    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+				</head>
+				<body>
+				<div class="topbar-wrap white">
+				    <div class="topbar-inner clearfix">
+				        <div class="topbar-logo-wrap clearfix">
+				            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+				            <ul class="navbar-list clearfix">
+				                <li><a class="on" href="index.php">首页</a></li>
+				               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+				            </ul>
+				        </div>
+				        <div class="top-info-wrap">
+				            <ul class="top-info-list clearfix">
+				                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+				                <li><a href="/api_logout.php?action=logout">退出</a></li>
+				            </ul>
+				        </div>
+				    </div>
+				</div>
+	       </div>
+        </div>
+</html>
+
+

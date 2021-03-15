@@ -1,0 +1,170 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>GM后台管理</title>
+    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="static/js/echarts.min.js"></script>
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.php">首页</a></li>
+               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+                <li><a href="/api_logout.php?action=logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container clearfix">
+    <!--/sidebar-->
+    <div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>常用操作</a>
+                    <ul class="sub-menu">
+                        <li><a href="user.php"><i class="icon-font">&#xe006;</i>角色管理</a></li>
+                        <li><a href="gm_cmd.php"><i class="icon-font">&#xe052;</i>玩家经验</a></li>
+                        <li><a href="PayGM.php"><i class="icon-font">&#xe008;</i>充值管理</a></li>
+                        <li><a href="mail.php"><i class="icon-font">&#xe005;</i>邮件管理</a></li>                       
+                        <li th:if="${session.user.account eq 'admin'}"><a href="cdk.php"><i class="icon-font">&#xe004;</i>CDK</a></li>
+                        
+                        <li ><a href="stat.php"><i class="icon-font">&#xe004;</i>统计数据</a></li>
+                        <li ><a href="stat_item.php"><i class="icon-font">&#xe004;</i>物品统计</a></li>
+                        <li ><a href="chat.php"><i class="icon-font">&#xe004;</i>聊天监控</a></li>
+                        <li ><a href="notice.php"><i class="icon-font">&#xe004;</i>通知管理</a></li>
+
+                    </ul>
+                </li>
+            
+            </ul>
+        </div>
+    </div>
+ 
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="/gamemgr">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">角色管理</span></div>
+        </div>
+
+        <div class="result-wrap">
+
+                <div class="result-title">
+                  <select class="common-text" name="area" id="area" style="height:29px;" > 
+	                	<option value=''>选择区</option>
+						<option th:each="area:${area_list}" th:value="${area.key}" th:text="${area.name}"></option>
+				  </select>
+                  
+                  <input class="btn btn-primary btn2" id="addItem" value="搜索" type="button" onclick="searchChat()" />
+				 
+                </div>
+                <div class="result-content">
+                    <table class="result-tab" id="chat"  width="100%" th:fragment="player">
+                        <tr>
+                            <th>充值玩家ID</th>
+                            <th>角色名称</th>
+                            <th>聊天内容</th>
+                            <th>时间</th>
+                            <th>操作</th>
+                        </tr>
+                        
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td><button>封号踢下线</button></td>
+                        </tr> 
+                         
+                       
+                         
+                        
+                      </table>
+                    <div class="list-page"> 1/1 页</div>
+                </div>
+
+        </div>
+    </div>
+    <!--/main-->
+    <input id="ipid" hidden />
+</div>
+</body>
+<script>
+//基于准备好的dom，初始化echarts实例
+
+// 使用刚指定的配置项和数据显示图表。
+
+
+
+function kickPlayer(pid){
+	jQuery.ajaxSetup({
+  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	
+	
+	jQuery.post("/api/kickPlayer",
+	{
+		ipid:pid,
+		area:$("#area").val()
+	},function(data){
+		alert(data);
+		
+	});
+}
+function searchChat(){
+	var area=$("#area").val();
+	if(area==""||area==undefined){
+		alert("选择区");
+		return;
+	}
+	jQuery.ajaxSetup({
+  	contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	
+	
+	jQuery.post("/api/chat",
+	{
+		area:$("#area").val()
+	},function(data){
+		console.log(data)
+		fabChat(data.chatList);
+	});
+
+}
+function fabChat(data){
+	var bills=$("#chat");
+	var bills_str=	"<tr>" + 
+	"<th>充值玩家ID</th>" + 
+	"<th>角色名称</th>" + 
+	"<th>聊天内容</th>" + 
+	"<th>时间</th>" + 
+	"<th>操作</th>" + 
+	"</tr>";
+	for(var i in data){
+		var obj=data[i];
+		var str_temp="";
+		str_temp="<tr><td>"+obj.pid+"</td><td>"+obj.name+"</td><td>"+obj.text+"</td><td>"+obj._time+"</td><td><button class='btn btn-primary' onclick='kickPlayer("+obj.pid+")'>封号下线</button></td>";
+		bills_str=bills_str+str_temp;
+	}
+	bills.html(bills_str);
+	
+}
+
+
+
+</script>
+</html>

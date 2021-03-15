@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>GM后台管理</title>
+ 
+    <link rel="stylesheet" type="text/css" href="static/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css"/>
+    
+    
+    <script type="text/javascript" src="static/js/modernizr.min.js"></script>
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.php">首页</a></li>
+               <!-- <li><a href="#" target="_blank">网站前台</a></li> -->
+            </ul>
+        </div>
+        <div class="top-info-wrap">
+            <ul class="top-info-list clearfix">
+                <li th:text="'当前登陆账号:'+${session.user.account}"></li>
+                <li><a href="/api_logout.php?action=logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="static/js/jquery-1.7.1.min.js"></script>
+
+<div class="container clearfix">
+    <div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="#"><i class="icon-font"></i>常用操作</a>
+                    <ul class="sub-menu">
+                        <li><a href="user.php"><i class="icon-font">&#xe006;</i>角色管理</a></li>
+                        <li><a href="gm_cmd.php"><i class="icon-font">&#xe052;</i>玩家经验</a></li>
+                        <li><a href="PayGM.php"><i class="icon-font">&#xe008;</i>充值管理</a></li>
+                        <li><a href="mail.php"><i class="icon-font">&#xe005;</i>邮件管理</a></li>                       
+                        <li th:if="${session.user.account eq 'admin'}"><a href="cdk.php"><i class="icon-font">&#xe004;</i>CDK</a></li>
+                        
+                        <li ><a href="stat.php"><i class="icon-font">&#xe004;</i>统计数据</a></li>
+                        <li ><a href="stat_item.php"><i class="icon-font">&#xe004;</i>物品统计</a></li>
+                        <li ><a href="chat.php"><i class="icon-font">&#xe004;</i>聊天监控</a></li>
+                        <li ><a href="notice.php"><i class="icon-font">&#xe004;</i>通知管理</a></li>
+                    </ul>
+                </li>
+            
+            </ul>
+        </div>
+    </div>
+     <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="#">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">邮件管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                    <table class="search-tab">
+                            <tr><td>所在区:</td><td>
+                            <select class="common-text" name="area" id="area" style="height:29px;" > 
+                            	<option value=''>选择区</option>
+                            	<option th:each="area:${area_list}" th:text="${area.name}" th:value="${area.key}"></option>
+  								
+  							</select>
+  							邮件类型：
+  							<select class="common-text" name="area" id="mail_type" style="height:29px;" onchange="changeArea(this)"> 
+                            	<option value='person' selected>指定角色</option>
+  								
+  								<option value='all'>全服邮件</option>
+  							</select>
+                            
+                            </td></tr>
+                    
+                            <tr><td>邮件标题(最长16字):</td><td><input class="common-text" value="GM" name="theme"  id="theme" ></tr>
+                            <tr><td>邮件内容:</td><td><input class="common-text" value="gm" name="content"  id="content"></td></tr>
+                            <tr id="player"><td>角色ID:</td><td><input placeholder="角色ID" class="common-text" value="" name="toPlayer"  id="toPlayer" type="text" ></td></tr>
+                            <tr><td>
+                            
+                            
+                            物品:</td><td>
+                           
+                            <input class="common-text" style="width:100px;" placeholder="模糊搜索" name=""  id="" type="text" oninput="itemKeyInput(this)">
+                            <select class="common-text" name="item" id="select_item" style="height:29px;" onchange="getitem(this)"> 
+                            	<option value=''>请在左侧输入筛选关键字</option>
+  							</select>
+  							数量
+  							<input class="common-text" style="width:100px;" placeholder="数量" name="" value="1"  id="item_num" type="text" >
+  							<input class="btn btn-primary btn2" id="addItem" value="添加" type="button" onclick="addItem()">
+  							<br/>
+  							<div  class="common-text" style="width:400px;height:250px;" value="" name="item"  id="items" type="text" readonly>
+  							
+  							</div>
+                            </td></tr>
+                            <tr><td><input class="common-text" value="0" name="toPlayerType"  id="toPlayerType" type="hidden"></td></tr>
+                            <tr><td><input class="common-text" value="1466930808967" name="effectBeginTime"  id="effectBeginTime" type="hidden"></td></tr>
+                            <tr> <td><input class="common-text" value="1466990808967" name="effectEndTime"  id="effectEndTime" type="hidden"></td></tr>
+                            <tr><td></td><td><input class="common-text" value="123456789" name="tstamp"  id="tstamp" type="hidden"></td></tr>
+                            <tr><td></td><td><input class="common-text" value="7B973AB0E8FB02339AC0956FB902BE5D" name="sign"  id="sign" type="hidden"></td></tr>
+                            <tr><td><input class="btn btn-primary btn2" id="sub" value="发送邮件" type="button" onclick="sendMail()"></td></tr>
+                            <tr><td  id="divMsg"> </td></tr>
+                    </table>
+               
+            </div>
+        </div>
+                
+    </div>
+    <!--/main-->
+</div>
+</body>
+<script type="text/javascript" th:inline="javascript" >
+
+var items=[[${items}]];
+function createOption(key){
+	var items_arr=items.split(",");
+	var options_str="";
+	var obj = document.getElementById("select_item");
+	if(key==""){
+		obj.options.length = 0; 
+		obj.add(new Option("请在左侧输入筛选关键字","请在左侧输入筛选关键字"));
+	}
+	if(key){
+		obj.options.length = 0; 
+		obj.add(new Option("请选择","请选择"));
+		for(var i=0;i<items_arr.length;i++){
+			if(items_arr[i].indexOf(key)!=-1){
+				obj.add(new Option(items_arr[i],items_arr[i])); 
+			}
+			
+		}
+	}
+	
+}
+//选区
+function changeArea(obj){
+	if(obj.value=="all"){//全区邮件
+		$("#player").hide();
+	}else{
+		$("#player").show();
+	}
+}
+//输入商品进行检索
+function itemKeyInput(obj_input){
+	createOption(obj_input.value);
+}
+//选中装备
+function getitem(obj){
+	console.log(obj.value)
+}
+//渲染展示已选择和添加的商品信息
+function createItemSelected(){
+	var items=document.getElementById("items");
+	var str=items.value;
+	if(str==""||str==undefined){
+		items.innerHTML="";
+		return;
+	}
+	
+	var str_arr=str.split(";");
+	var html_str="";
+	for(var i =0;i<str_arr.length;i++){
+		html_str=html_str+"<div style='background-color:lightyellow;overflow-y:auto;border:1px solid lightgray;border-radius:5px;margin-top:5px;'>"+str_arr[i].split(":")[0]+"	数量：<span style='color:red;font-size:18px;'>"+str_arr[i].split(":")[1]+"</span><button value='"+i+"' style='float:right;width:100px;' class='btn-primary' onclick='deleteItem(this)'>删除</button></div>"
+	}
+	items.innerHTML=html_str;
+}
+//删除
+function deleteItem(obj){
+	var items=document.getElementById("items");
+	var old_items=items.value;
+	var old_items_arr=[];
+	if(old_items!=""&&old_items!=undefined){
+		old_items_arr=old_items.split(";");
+		old_items_arr.splice(obj.value,1);
+	}
+	old_items=old_items_arr.join(";")
+	items.value=old_items;
+	console.log(items.value)
+	createItemSelected();
+}
+//添加装备
+function addItem(){
+	var item_name=document.getElementById("select_item").value;
+	var count=document.getElementById("item_num").value;
+	var items=document.getElementById("items");
+	var old_items=items.value;
+	var old_items_arr=[];
+	if(old_items!=""&&old_items!=undefined){
+		old_items_arr=old_items.split(";");
+	}
+	
+	//对于相同的商品，进行处理
+	for(var i=0;i<old_items_arr.length;i++){
+		if(old_items_arr[i].indexOf(item_name)!=-1){
+			old_items_arr.splice(i,1);
+		}
+	}
+	old_items=old_items_arr.join(";")
+	if(old_items==""||old_items==undefined){
+		old_items=item_name+":"+count;
+	}else{
+		old_items=old_items+";"+item_name+":"+count;
+	}
+	console.log(old_items)
+	items.value=old_items;
+	createItemSelected();
+}
+if($("#mail_type").val()=="all"){
+	$("#player").hide();
+}
+function sendMail()
+{
+	var mail_type=$("#mail_type").val();
+	if(mail_type==""||mail_type==undefined){
+		alert("选择邮件类型");
+		return;
+	}
+	var area=$("#area").val();
+	if(area==""||area==undefined){
+		alert("选择区");
+		return;
+	}
+	var theme=$("#theme").val();
+	if(theme==""||theme==undefined){
+		alert("填写邮件标题");
+		return;
+	}
+	var content=$("#content").val();
+	if(content==""||content==undefined){
+		alert("填写邮件内容");
+		return;
+	}
+	var toPlayer=$("#toPlayer").val();
+	if(mail_type!="all"){
+		if(toPlayer==""||toPlayer==undefined){
+			alert("角色ID错误");
+		return;
+	}
+	}
+	
+  	var items=$("#items").val();
+  	if(items==""||items==undefined){
+		alert("选择物品");
+		return;
+	}
+	jQuery.ajaxSetup({
+  	contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	
+	
+	jQuery.post("/api/sendMail",
+	{
+		area:$("#area").val(),
+		mail_type:mail_type,
+		theme:$("#theme").val(),
+		content:$("#content").val(),
+		toPlayer:$("#toPlayer").val(),
+  	  	items:$("#items").val()
+	},function(data){$("#divMsg").html(data);});
+		
+}
+
+function getSignAndSend()
+{
+	$.ajaxSetup({
+  		contentType: "application/x-www-form-urlencoded; charset=utf-8"
+  	});
+  	$.post("./api/api_services.php?action=mailsign",{mailType:$("#mailType").val()},function(data){
+  		var sign = data.sign;
+  		var tstamp = data.tstamp;
+  		$("#sign").val(sign);
+  		$("#tstamp").val(tstamp);
+  		sendMail();
+  	},"json");
+}
+</script>
+</html>
